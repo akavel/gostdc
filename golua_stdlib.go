@@ -100,21 +100,7 @@ func go_time(t uintptr) {
 	*pt = time.Now().Unix()
 }
 
-type luapanic struct{}
-
-func go_throw(L uintptr) {
-	panic(luapanic{})
-}
-
 func golua_call(L, f, uv uintptr)
-
-func go_try(L, f, uv uintptr) {
-	defer func() {
-		recover()
-	}()
-
-	golua_call(L, f, uv)
-}
 
 var printf_matcher = regexp.MustCompile(`%.`)
 var printf_gmatcher = regexp.MustCompile(`%\.14g`) // HACK: standard Lua float format
