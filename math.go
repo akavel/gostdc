@@ -1,5 +1,5 @@
 /* File generated automatically by gen_math.lua */
-package internal
+package gostdc
 
 import (
 	"math"

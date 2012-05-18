@@ -1,4 +1,4 @@
-package internal
+package gostdc
 
 import (
 	"fmt"
@@ -241,20 +241,6 @@ func go_strtod(str, endptr_, presult_ uintptr) {
 	if endptr_ != 0 {
 		*(*uintptr)(unsafe.Pointer(endptr_)) = str
 	}
-}
-
-func go_stubwriter(L_, pbuf, sz, ud_, pret_ uintptr) {
-	L := State(L_)
-	di := *((*dumpinfo)(unsafe.Pointer(ud_)))
-	pret := (*int)(unsafe.Pointer(pret_))
-	*pret = di.writer(L, pbuf, sz, di.data)
-}
-
-func go_stubcfunction(L_, f_, pret_ uintptr) {
-	L := State(L_)
-	f := (*Function)(unsafe.Pointer(f_))
-	pret := (*int)(unsafe.Pointer(pret_))
-	*pret = (*f)(L)
 }
 
 type stdiostream int
