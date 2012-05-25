@@ -14,6 +14,13 @@ TODO
   * slap license on the files + add AUTHORS file.
   * write full pretty readme
   * remove any left 'golua' in file contents
+  * fix `strstr()` (it now uses simple naive O(m*n) algorithm) or
+    reuse some MIT/BSD implementation for it
+  * fix all FIXMEs and/or reuse some MIT/BSD implementations
+  * extend the library to cover all of Standard C Library
+  * [optionally] replace most C functions with some MIT/BSD
+    implementations
+  * split the .c and .go files functionally as .h files would suggest
 
 
 LICENSE
