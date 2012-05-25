@@ -1,10 +1,10 @@
 
-#include "stdio.h"
-#include "time.h"
-#include "locale.h"
-#include "stdarg.h"
+#define gostdc_stdio_h
+#define gostdc_time_h
+#define gostdc_locale_h
+#define gostdc_stdarg_h
 
-#include "goctypes.h"
+#include "gostdc.h"
 
 
 FILE* stderr;

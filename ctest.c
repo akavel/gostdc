@@ -1,12 +1,14 @@
 
-#include "goctypes.h"
+#define gostdc_string_h
+#define gostdc_stdio_h
+
+#include "gostdc.h"
+
 
 void runtime·panicstring(char *);
 
 ////////
 
-#include "string.h"
-#include "stdio.h"
 
 void
 TestStrlen(void) {

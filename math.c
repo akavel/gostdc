@@ -1,6 +1,6 @@
 /* File generated automatically by gen_math.lua */
 
-#include "goctypes.h"
+#include "gostdc.h"
 
 double
 asin(double x) {
