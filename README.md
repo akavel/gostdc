@@ -1,3 +1,7 @@
+gostdc provides C Standard Library (alias libc) for porting legacy C programs to compile with [the Go compiler suite][goc] [Work In Progress].
+
+  [goc]: http://golang.org/cmd/cc/
+
 QUICK USAGE
 -----------
 
