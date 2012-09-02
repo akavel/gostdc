@@ -1,6 +1,9 @@
-gostdc provides C Standard Library (alias libc) for porting legacy C programs to compile with [the Go compiler suite][goc] [Work In Progress].
+gostdc provides C Standard Library (alias libc) for porting legacy C programs to compile with [the Go compiler suite][goc].
+
+**NOTE:** Work In Progress. I use it in the [goluago][goluago] project to some success, but it seems it has some lurking bugs. It has only rudimentary test coverage, so I make no guarantees, Use At Your Own Risk, it may eat your homework, kill your kittens, etc., etc.
 
   [goc]: http://golang.org/cmd/cc/
+  [goluago]: http://github.com/akavel/goluago
 
 QUICK USAGE
 -----------
