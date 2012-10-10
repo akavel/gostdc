@@ -3,6 +3,7 @@ package gostdc
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"regexp"
 	"runtime"
@@ -93,6 +94,26 @@ func go_atan2(y, x uintptr) {
 	px := (*float64)(unsafe.Pointer(x))
 	py := (*float64)(unsafe.Pointer(y))
 	*py = math.Atan2(*py, *px)
+}
+
+func go_frexp(numptr, expptr uintptr) {
+	pnum := (*float64)(unsafe.Pointer(numptr))
+	pexp := (*int)(unsafe.Pointer(expptr)) //FIXME: is int OK here?
+	*pnum, *pexp = math.Frexp(*pnum)
+}
+
+func go_ldexp(xptr uintptr, exp int) {
+	px := (*float64)(unsafe.Pointer(xptr))
+	*px = math.Ldexp(*px, exp)
+}
+
+func go_rand(retptr uintptr) {
+	pret := (*int32)(unsafe.Pointer(retptr))
+	*pret = rand.Int31()
+}
+
+func go_srand(seed uintptr) {
+	rand.Seed(int64(seed))
 }
 
 func go_time(t uintptr) {

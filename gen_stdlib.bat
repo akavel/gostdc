@@ -8,19 +8,16 @@ if not exist unifdef.txt (
 )
 set /p unifdef=<unifdef.txt
 
-if "%1"=="" (
-	echo USAGE: %0 FUNC_NAME
-	goto :eof
-)
+cd _libc
+for %%f in (*.c) do call :conv %%f
+endlocal
+goto :eof
 
-if not exist "_libc\%1.c" (
-	echo %0: "_libc\%1.c" does not exist
-	goto :eof
-)
-
+:conv %1
 set defs= 
 set defs=%defs% -U_KERNEL
 set defs=%defs% -U_STANDALONE
-%unifdef% %defs% "_libc\%1.c" > "%1.c"
-
-endlocal
+set defs=%defs% -UAPIWARN
+set defs=%defs% -DMEMCOPY
+%unifdef% %defs% "%1" > "..\%1"
+goto :eof

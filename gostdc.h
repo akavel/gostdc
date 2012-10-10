@@ -81,7 +81,6 @@ typedef int32		intptr;
 
 #endif
 
-
 /***************************/ 
 /* assert.h */ 
 #ifdef gostdc_assert_h 
@@ -422,3 +421,15 @@ time_t time(time_t*);
 
 #endif
 #endif /* gostdc_time_h */ 
+
+#ifndef __BIONIC
+#define __BIONIC
+
+/* Not needed by Lua, but needed by platform_bionic */
+int strncmp(const char*, const char*, size_t);
+#define ERANGE 1
+
+//FIXME: is it ok? or at least acceptable?
+#define ULONG_MAX ((unsigned long)0xffffffff)
+
+#endif
