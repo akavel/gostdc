@@ -3,6 +3,7 @@ package gostdc
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"regexp"
 	"runtime"
@@ -95,6 +96,26 @@ func go_atan2(y, x uintptr) {
 	*py = math.Atan2(*py, *px)
 }
 
+func go_frexp(numptr, expptr uintptr) {
+	pnum := (*float64)(unsafe.Pointer(numptr))
+	pexp := (*int)(unsafe.Pointer(expptr)) //FIXME: is int OK here?
+	*pnum, *pexp = math.Frexp(*pnum)
+}
+
+func go_ldexp(xptr uintptr, exp int) {
+	px := (*float64)(unsafe.Pointer(xptr))
+	*px = math.Ldexp(*px, exp)
+}
+
+func go_rand(retptr uintptr) {
+	pret := (*int32)(unsafe.Pointer(retptr))
+	*pret = rand.Int31()
+}
+
+func go_srand(seed uintptr) {
+	rand.Seed(int64(seed))
+}
+
 func go_time(t uintptr) {
 	pt := (*int64)(unsafe.Pointer(t))
 	*pt = time.Now().Unix()
@@ -181,6 +202,7 @@ const (
 )
 
 func go_strtod(str, endptr_, presult_ uintptr) {
+	str0 := str
 	for *peek(str) == ' ' { //FIXME: isWhitespace(...)
 		str++
 	}
@@ -234,7 +256,9 @@ func go_strtod(str, endptr_, presult_ uintptr) {
 
 	result, err := strconv.ParseFloat(string(buf), 64)
 	if err != nil {
-		return
+		// TODO: for library testing, log the error somewhere
+		result = 0
+		str = str0
 	}
 	*(*float64)(unsafe.Pointer(presult_)) = result
 

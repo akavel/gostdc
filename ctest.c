@@ -10,5 +10,6 @@ void
 ·golua_ctests(uintptr t) {
     ·go_ctest(t, TestStrlen);
     ·go_ctest(t, TestStrcmp);
+    ·go_ctest(t, TestStrtod);
     ·go_ctest(t, TestSprintf);
 }
