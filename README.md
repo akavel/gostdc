@@ -5,6 +5,8 @@ gostdc provides C Standard Library (alias libc) for porting legacy C programs to
   [goc]: http://golang.org/cmd/cc/
   [goluago]: http://github.com/akavel/goluago
 
+[![Build Status](https://secure.travis-ci.org/akavel/gostdc.png)](http://travis-ci.org/akavel/gostdc) - includes *some* unit tests.
+
 QUICK USAGE
 -----------
 
