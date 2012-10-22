@@ -565,3 +565,39 @@ fputs(const char* s, FILE* stream) {
     }
     return 1; //FIXME
 }
+double
+frexp(double num, int* exp) {
+    void ·go_frexp(uintptr, uintptr);
+    ·go_frexp((uintptr)&num, (uintptr)exp); //FIXME: is int* safe here, with regards to its width?
+    return num;
+}
+
+//FIXME: error handling
+double
+ldexp(double x, int exp) {
+    void ·go_ldexp(uintptr, uintptr);
+    ·go_ldexp((uintptr)&x, (uintptr)&exp); //FIXME: is int* safe here, with regards to its width?
+    return x;
+}
+
+int
+rand(void) {
+    void ·go_rand(uintptr);
+    int32 ret = 0;
+    ·go_rand((uintptr)&ret);
+    return ret;
+}
+
+void
+srand(unsigned seed) {
+    void ·go_srand(uintptr);
+    ·go_srand((uintptr)seed);
+}
+
+//FIXME: handle errors
+char*
+fgets(char* s, int n, FILE* stream) {
+    void ·gofgets(uintptr, uintptr, uintptr);
+    ·gofgets((uintptr)s, n, (uintptr)stream);
+    return s;
+}

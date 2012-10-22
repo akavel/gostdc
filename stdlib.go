@@ -163,6 +163,13 @@ func poke(addr uintptr, value byte) {
 	*(*byte)(unsafe.Pointer(addr)) = value
 }
 
+func pokestringplus0(dst uintptr, src []byte) {
+	for i := 0; i < len(src); i++ {
+		poke(dst+uintptr(i), src[i])
+	}
+	poke(dst+uintptr(len(src)), 0)
+}
+
 //FIXME
 func go_sprintf(str, format, args, bigword uintptr) {
 	format1 := go_vprintf(format, args, bigword)
@@ -284,8 +291,24 @@ func (s stdiostream) putc(c byte) {
 	stdiostreams[s].Write([]byte{c})
 }
 
+func (s stdiostream) gets(n int) []byte {
+	// FIXME: check and return any errors from Read
+	buf := make([]byte, n)
+	n, err := stdiostreams[s].Read(buf)
+	if err != nil {
+		panic(err.Error())
+	} // FIXME: make sure errors are handled somehow sensibly
+	return buf[:n]
+}
+
 func goputc(c_, stream_ uintptr) {
 	stream := stdiostream(stream_)
 	c := byte(c_)
 	stream.putc(c)
+}
+
+func gofgets(s_ uintptr, n int, stream_ uintptr) {
+	stream := stdiostream(stream_)
+	buf := stream.gets(n - 1)
+	pokestringplus0(s_, buf)
 }
