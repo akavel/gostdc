@@ -78,18 +78,6 @@ atan2(double y, double x) {
     return y;
 }
 
-char*
-strchr(const char* s, int ch) {
-    char c = ch;
-    while (*s && (*s != c)) {
-        s++;
-    }
-    if (!*s) {
-        return 0;
-    }
-    return (char*) s;
-}
-
 size_t
 strlen(const char* s) {
     const char* p = s;
