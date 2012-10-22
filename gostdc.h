@@ -90,7 +90,7 @@ typedef int32		intptr;
 #define __ASSERT_H
 
 void runtime·panicstring(int8*);
-#define assert(x) ((void)((x) || (runtime·panicstring("ASSERT FAIL in Lua code"), 1)))
+#define assert(x) ((void)((x) || (runtime·panicstring("ASSERT FAIL in C code"), 1)))
 
 #endif
 #endif /* gostdc_assert_h */ 
