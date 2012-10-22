@@ -153,20 +153,6 @@ strncpy(char* dst, const char* src, size_t n) {
 }
 
 char*
-strcat(char* dst, const char* src) {
-    char* dst0 = dst;
-    while (*dst) {
-        dst++;
-    }
-    while (*src) {
-        *dst = *src;
-        dst++; src++;
-    }
-    *dst = *src;
-    return dst0;
-}
-
-char*
 strncat(char* dst, const char* src, size_t n) {
     char* dst0 = dst;
     if (n <= 0) {
