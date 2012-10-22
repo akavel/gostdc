@@ -550,7 +550,7 @@ frexp(double num, int* exp) {
 double
 ldexp(double x, int exp) {
     void ·go_ldexp(uintptr, uintptr);
-    ·go_ldexp((uintptr)&x, (uintptr)&exp); //FIXME: is int* safe here, with regards to its width?
+    ·go_ldexp((uintptr)&x, (uintptr)exp); //FIXME: is int safe here, with regards to its width?
     return x;
 }
 
