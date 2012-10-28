@@ -126,22 +126,27 @@ func golua_call(L, f, uv uintptr)
 var printf_matcher = regexp.MustCompile(`%.`)
 var printf_gmatcher = regexp.MustCompile(`%\.14g`) // HACK: standard Lua float format
 
+func vround(x, n uintptr) uintptr {
+	return (x+n-1)&^(n-1)
+}
+
 //FIXME
-func go_vprintf(format, args, bigword uintptr) []byte {
+func go_vprintf(format, argsbase, argsoff, bigword uintptr) []byte {
 	format1 := cstr2bytes(format)
 	//HACK:
 	format1 = printf_gmatcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
-		return []byte(fmt.Sprintf("%.14g", *(*float64)(unsafe.Pointer(args))))
+		argsoff = vround(argsoff, 8) + 8
+		return []byte(fmt.Sprintf("%.14g", *(*float64)(unsafe.Pointer(argsbase+argsoff-8))))
 	})
 	format1 = printf_matcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
 		switch pat[1] {
 		case 's':
-			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(args)))
-			args += bigword
+			argsoff = vround(argsoff, bigword) + bigword
+			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(argsbase+argsoff-bigword)))
 			return arg
 		case 'd':
-			arg := *((*int)(unsafe.Pointer(args)))
-			args += bigword
+			argsoff = vround(argsoff, 4) + 4 // FIXME: ok or not?
+			arg := *((*int)(unsafe.Pointer(argsbase+argsoff-4)))
 			return []byte(fmt.Sprintf("%d", arg))
 		case '%':
 			return pat[1:]
@@ -154,8 +159,8 @@ func go_vprintf(format, args, bigword uintptr) []byte {
 }
 
 //FIXME
-func go_fprintf(stream, format, args, bigword uintptr) {
-	format1 := go_vprintf(format, args, bigword)
+func go_fprintf(stream, format, argsbase, argsoff, bigword uintptr) {
+	format1 := go_vprintf(format, argsbase, argsoff, bigword)
 	print(string(format1))
 }
 
@@ -171,8 +176,8 @@ func pokestringplus0(dst uintptr, src []byte) {
 }
 
 //FIXME
-func go_sprintf(str, format, args, bigword uintptr) {
-	format1 := go_vprintf(format, args, bigword)
+func go_sprintf(str, format, argsbase, argsoff, bigword uintptr) {
+	format1 := go_vprintf(format, argsbase, argsoff, bigword)
 	for i := 0; i < len(format1); i++ {
 		poke(str+uintptr(i), format1[i])
 	}

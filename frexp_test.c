@@ -11,5 +11,4 @@ TestFrexp(void) {
 
 	if (d=frexp(15.2l, &exp), ((d!=0.95l) || (exp!=4)))
 		sprintf(buf, "[%.14g] [%d]", d, exp), runtime·panicstring(buf);
-	sprintf(buf, "[%.14g] [%d]", d, exp), runtime·panicstring(buf);
 }

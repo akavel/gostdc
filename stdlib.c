@@ -397,10 +397,10 @@ clock(void) {
 #pragma textflag 7
 int
 sprintf(char* str, const char* format, ...) {
-    void ·go_sprintf(uintptr, uintptr, uintptr, uintptr);
+    void ·go_sprintf(uintptr, uintptr, uintptr, uintptr, uintptr);
     va_list argp;
     va_start(argp, format);
-    ·go_sprintf((uintptr)str, (uintptr)format, (uintptr)argp, (uintptr)_BIGWORD);
+    ·go_sprintf((uintptr)str, (uintptr)format, argp.base, argp.off, (uintptr)sizeof(uintptr));
     va_end(argp);
     //nyi('6');
     return 0; //FIXME
@@ -410,10 +410,10 @@ sprintf(char* str, const char* format, ...) {
 #pragma textflag 7
 int
 fprintf(FILE* stream, const char* format, ...) {
-    void ·go_fprintf(uintptr, uintptr, uintptr, uintptr);
+    void ·go_fprintf(uintptr, uintptr, uintptr, uintptr, uintptr);
     va_list argp;
     va_start(argp, format);
-    ·go_fprintf((uintptr)stream, (uintptr)format, (uintptr)argp, (uintptr)_BIGWORD);
+    ·go_fprintf((uintptr)stream, (uintptr)format, argp.base, argp.off, (uintptr)sizeof(uintptr));
     va_end(argp);
     //nyi('7');
     return 0; //FIXME

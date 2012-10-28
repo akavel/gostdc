@@ -35,6 +35,8 @@ typedef int32		intptr;
 #define	USED(x)	if(x){}else{}
 #define	FLUSH(x)	USED(x)
 
+#define	ROUND(x, n)	(((x)+(n)-1)&~((n)-1)) /* all-caps to mark as macro: it evaluates n twice */
+
 /*
  * get rid of C types
  * the / / / forces a syntax error immediately,
@@ -257,24 +259,29 @@ typedef unsigned int size_t; // 32b, to match size described in Lua header for c
 #ifndef __STDARG_H
 #define __STDARG_H
 
-#ifdef _64BIT
-#define _BIGWORD 8
-#else
-#define _BIGWORD 4
-#endif
-
-
-typedef char* va_list;
-#define va_start(ap,lastarg) ap = (((char*)(void*)&lastarg)+_BIGWORD)
-#define va_arg(ap,type) (*(type*)(void*)(ap+=_BIGWORD, ap-_BIGWORD))
-#define va_end(ap)
-
-
-// void va_start(va_list ap, lastarg);
-// Initialisation macro which must be called once before any unnamed argument is accessed. Stores context information in ap. lastarg is the last named parameter of the function.
-// type va_arg(va_list ap, type);
-// Yields value of the type (type) and value of the next unnamed argument.
-// void va_end(va_list ap);
+// FIXME: tested only on amd64
+// FIXME: tested and supported only for usecases present in Lua source code
+// varargs macros based on:
+// - vprintf() in $GOROOT/src/pkg/runtime/print.c
+// - http://plan9.bell-labs.com/sources/plan9/amd64/include/u.h
+// see also:
+// - https://bitbucket.org/floren/inferno/src/0513433e212b/Plan9/386/include/u.h?at=default
+// - gargs() in $GOROOT/src/cmd/6c/txt.c
+// - functions using '...' in $GOROOT/.../*.c
+typedef struct {
+	uintptr base;
+	uintptr off;
+} va_list;
+#define va_start(list,arg0) \
+	((list.off=0), (list.base = (uintptr)(void*)((&(arg0))+1)))
+#define va_end(list) \
+	USED(list.base)
+#define va_arg(list,type) \
+	((sizeof(type)==4) ? \
+		((list.off = ROUND(list.off, 4)+4), (type*)(list.base+list.off))[-1] : \
+	(sizeof(type)==8) ? \
+		((list.off = ROUND(list.off, sizeof(uintptr))+8), (type*)(list.base+list.off))[-1] : \
+		(runtime·panicstring("va_arg variant unsupported"), (type*)list.base)[0])
 
 #endif
 #endif /* gostdc_stdarg_h */ 
