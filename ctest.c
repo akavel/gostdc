@@ -8,9 +8,13 @@ void
 
 void
 ·golua_ctests(uintptr t) {
+    // order is important here
     ·go_ctest(t, TestStrlen);
     ·go_ctest(t, TestStrcmp);
-    ·go_ctest(t, TestStrtod);
+    ·go_ctest(t, TestVarargs);
     ·go_ctest(t, TestSprintf);
+
+    ·go_ctest(t, TestStrtod);
     ·go_ctest(t, TestLdexp);
+    ·go_ctest(t, TestFrexp);
 }

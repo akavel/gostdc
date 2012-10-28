@@ -16,4 +16,8 @@ TestSprintf(void) {
 
     if (sprintf(buf, "a%.14ga", 1.01l), strcmp(buf, "a1.01a")!=0)
         runtime·panicstring(buf);
+    if (sprintf(buf, "a%da", (int)123), strcmp(buf, "a123a")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%da%da", (int)123, (int)456), strcmp(buf, "a123a456a")!=0)
+        runtime·panicstring(buf);
 }

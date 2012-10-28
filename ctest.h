@@ -12,3 +12,4 @@ void TestSprintf(void);
 void TestStrcmp(void);
 void TestStrlen(void);
 void TestStrtod(void);
+void TestVarargs(void);
