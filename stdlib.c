@@ -95,16 +95,6 @@ strtod(const char* nptr, char** endptr) {
     return result;
 }
 
-//FIXME
-unsigned long
-strtoul(const char* str, char** endptr, int base) {
-    nyi('1');
-    if (endptr) {
-        *endptr = (char*) str+1;
-    }
-    return 0;
-}
-
 int
 isspace(int c) {
     return (c == ' ') ||

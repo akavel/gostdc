@@ -126,6 +126,8 @@ int toupper(int);
 #ifndef __ERRNO_H
 #define __ERRNO_H
 
+#define ERANGE 1
+
 extern int errno;
 
 #endif
@@ -147,6 +149,9 @@ extern int errno;
 // (16b -- 0x7fff)
 
 #define UCHAR_MAX 255
+
+//TODO: verify this
+#define ULONG_MAX 0xFFFFFFFFUL
 
 #endif
 #endif /* gostdc_limits_h */ 
