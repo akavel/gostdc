@@ -20,39 +20,55 @@ func cstr2bytes(cstr uintptr) []byte {
 	return buf
 }
 
-var printf_matcher = regexp.MustCompile(`%.`)
-var printf_gmatcher = regexp.MustCompile(`%\.14g`) // HACK: standard Lua float format
+var printf_matcher = regexp.MustCompile(
+	`%(` + // percent sign
+		`[-+ #0]{0,5}` + // optional flags
+		`\d{0,2}` + // optional width
+		`(\.\d{0,2})?` + // optional precision
+		`l?` + // optional long
+		`[cdiouxXeEfgGs]` + // format specifier
+		`|%)`) // or two percents
 
 func vround(x, n uintptr) uintptr {
 	return (x + n - 1) &^ (n - 1)
 }
 
 //FIXME
-func go_vprintf(format, argsbase, argsoff, bigword uintptr) []byte {
-	format1 := cstr2bytes(format)
-	//HACK:
-	format1 = printf_gmatcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
-		argsoff = vround(argsoff, 8) + 8
-		return []byte(fmt.Sprintf("%.14g", *(*float64)(unsafe.Pointer(argsbase + argsoff - 8))))
-	})
-	format1 = printf_matcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
-		switch pat[1] {
+func go_vprintf(format_, argsbase, argsoff, bigword uintptr) []byte {
+	format := cstr2bytes(format_)
+	format = printf_matcher.ReplaceAllFunc(format, func(pat []byte) []byte {
+		if pat[len(pat)-2] == 'l' {
+			// FIXME: HACK
+			pat = append(pat[:len(pat)-2], pat[len(pat)-1])
+		}
+		switch pat[len(pat)-1] {
+		case 'e', 'E', 'f', 'g', 'G':
+			argsoff = vround(argsoff, 8) + 8
+			return []byte(fmt.Sprintf(string(pat), *(*float64)(unsafe.Pointer(argsbase + argsoff - 8))))
 		case 's':
 			argsoff = vround(argsoff, bigword) + bigword
 			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(argsbase + argsoff - bigword)))
 			return arg
-		case 'd':
+		case 'd', 'i':
+			pat[len(pat)-1] = 'd'
 			argsoff = vround(argsoff, 4) + 4 // FIXME: ok or not?
 			arg := *((*int)(unsafe.Pointer(argsbase + argsoff - 4)))
-			return []byte(fmt.Sprintf("%d", arg))
+			return []byte(fmt.Sprintf(string(pat), arg))
+		case 'u', 'o', 'x', 'X':
+			if pat[len(pat)-1] == 'u' {
+				pat[len(pat)-1] = 'd'
+			}
+			argsoff = vround(argsoff, 4) + 4 // FIXME: ok or not?
+			arg := *((*uint)(unsafe.Pointer(argsbase + argsoff - 4)))
+			return []byte(fmt.Sprintf(string(pat), arg))
 		case '%':
 			return pat[1:]
 		default:
-			panic("not implemented printf format %" + string(pat[1]) + " in \"" + string(format1) + "\"")
+			panic("not implemented printf format " + string(pat) + " in \"" + string(format) + "\"")
 		}
 		return pat
 	})
-	return format1
+	return format
 }
 
 //FIXME
