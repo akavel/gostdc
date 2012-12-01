@@ -8,6 +8,7 @@ void ·go_ctest(uintptr t, ctestf f);
 
 void TestFrexp(void);
 void TestLdexp(void);
+void TestMemchr(void);
 void TestPtrdiff_t(void);
 void TestSprintf(void);
 void TestStrcmp(void);

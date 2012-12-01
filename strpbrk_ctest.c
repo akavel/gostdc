@@ -4,7 +4,7 @@
 
 void
 TestStrpbrk(void) {
-	char *s = "abc";
+	char *s;
 
 	if (s="abc", strpbrk(s, "a")!=s)
 		runtime·panicstring("strpbrk failed 1");

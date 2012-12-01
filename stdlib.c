@@ -204,9 +204,10 @@ memchr(const void* s, int c, size_t n) {
     unsigned char* p = s;
     unsigned char u = (unsigned char) c;
     while (n > 0) {
-        if (*p == c) {
+        if (*p == u) {
             return (void*) p;
         }
+        p++;
         n--;
     }
     return 0;

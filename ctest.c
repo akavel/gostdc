@@ -14,6 +14,7 @@ void
     ·go_ctest(t, TestVarargs);
     ·go_ctest(t, TestSprintf);
 
+    ·go_ctest(t, TestMemchr);
     ·go_ctest(t, TestStrpbrk);
     ·go_ctest(t, TestStrtod);
     ·go_ctest(t, TestStrtoul);
