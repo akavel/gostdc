@@ -26,7 +26,7 @@ var printf_matcher = regexp.MustCompile(
 		`\d{0,2}` + // optional width
 		`(\.\d{0,2})?` + // optional precision
 		`l?` + // optional long
-		`[cdiouxXeEfgGs]` + // format specifier
+		`[cdiouxXeEfgGsp]` + // format specifier
 		`|%)`) // or two percents
 
 func vround(x, n uintptr) uintptr {
@@ -49,6 +49,10 @@ func go_vprintf(format_, argsbase, argsoff, bigword uintptr) []byte {
 			argsoff = vround(argsoff, bigword) + bigword
 			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(argsbase + argsoff - bigword)))
 			return arg
+		case 'p':
+			argsoff = vround(argsoff, bigword) + bigword
+			arg := (uintptr)(unsafe.Pointer(argsbase + argsoff - bigword))
+			return []byte(fmt.Sprintf("%x", arg))
 		case 'd', 'i':
 			pat[len(pat)-1] = 'd'
 			argsoff = vround(argsoff, 4) + 4 // FIXME: ok or not?
