@@ -18,4 +18,5 @@ void
     ·go_ctest(t, TestStrtoul);
     ·go_ctest(t, TestLdexp);
     ·go_ctest(t, TestFrexp);
+    ·go_ctest(t, TestPtrdiff_t);
 }
