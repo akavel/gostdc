@@ -12,6 +12,7 @@ void TestPtrdiff_t(void);
 void TestSprintf(void);
 void TestStrcmp(void);
 void TestStrlen(void);
+void TestStrpbrk(void);
 void TestStrtod(void);
 void TestStrtoul(void);
 void TestVarargs(void);
