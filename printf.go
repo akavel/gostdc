@@ -48,7 +48,7 @@ func go_vprintf(format_, argsbase, argsoff, bigword uintptr) []byte {
 		case 's':
 			argsoff = vround(argsoff, bigword) + bigword
 			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(argsbase + argsoff - bigword)))
-			return arg
+			return []byte(fmt.Sprintf(string(pat), string(arg)))
 		case 'p':
 			argsoff = vround(argsoff, bigword) + bigword
 			arg := (uintptr)(unsafe.Pointer(argsbase + argsoff - bigword))

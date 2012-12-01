@@ -27,4 +27,6 @@ TestSprintf(void) {
         runtime·panicstring(buf);
     if (sprintf(buf, "a%ca2", 'G'), strcmp(buf, "aGa2")!=0)
         runtime·panicstring(buf);
+    if (sprintf(buf, "a%-3sa", "y"), strcmp(buf, "ay  a")!=0)
+        runtime·panicstring(buf);
 }
