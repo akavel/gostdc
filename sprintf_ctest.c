@@ -20,4 +20,7 @@ TestSprintf(void) {
         runtime·panicstring(buf);
     if (sprintf(buf, "a%da%da", (int)123, (int)456), strcmp(buf, "a123a456a")!=0)
         runtime·panicstring(buf);
+
+    if (sprintf(buf, "%ld", (long int)234), strcmp(buf, "234")!=0)
+        runtime·panicstring(buf);
 }
