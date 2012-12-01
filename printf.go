@@ -65,6 +65,10 @@ func go_vprintf(format_, argsbase, argsoff, bigword uintptr) []byte {
 			argsoff = vround(argsoff, 4) + 4 // FIXME: ok or not?
 			arg := *((*uint)(unsafe.Pointer(argsbase + argsoff - 4)))
 			return []byte(fmt.Sprintf(string(pat), arg))
+		case 'c':
+			argsoff = vround(argsoff, 1) + 1 // FIXME: ok or not?
+			arg := *((*byte)(unsafe.Pointer(argsbase + argsoff - 1)))
+			return []byte{arg}
 		case '%':
 			return pat[1:]
 		default:

@@ -23,4 +23,8 @@ TestSprintf(void) {
 
     if (sprintf(buf, "%ld", (long int)234), strcmp(buf, "234")!=0)
         runtime·panicstring(buf);
+    if (sprintf(buf, "a%ca1", "G"[0]), strcmp(buf, "aGa1")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%ca2", 'G'), strcmp(buf, "aGa2")!=0)
+        runtime·panicstring(buf);
 }
