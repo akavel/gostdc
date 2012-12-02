@@ -1,5 +1,6 @@
 
 #define gostdc_stdlib_h
+#define gostdc_math_h
 #include "ctest.h"
 
 void
@@ -24,5 +25,10 @@ TestStrtod(void) {
         runtime·panicstring("strtod failed 7");
     if (end!=s)
         runtime·panicstring("strtod failed 8");
+
+    if (s="10e500", strtod(s, 0)!=HUGE_VAL)
+        runtime·panicstring("strtod failed 9");
+    if (s="-10e500", strtod(s, 0)!=-HUGE_VAL)
+        runtime·panicstring("strtod failed 10");
 }
 

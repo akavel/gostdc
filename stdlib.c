@@ -3,6 +3,7 @@
 #define gostdc_time_h
 #define gostdc_locale_h
 #define gostdc_stdarg_h
+#define gostdc_math_h
 
 #include "gostdc.h"
 
@@ -86,12 +87,15 @@ strlen(const char* s) {
     return (size_t) (p - s - 1);
 }
 
+
 //FIXME
 double
 strtod(const char* nptr, char** endptr) {
-    void ·go_strtod(uintptr, uintptr, uintptr presult);
+    double hugeval = HUGE_VAL;
+    double mhugeval = -HUGE_VAL;
+    void ·go_strtod(uintptr, uintptr, uintptr, uintptr, uintptr presult);
     double result=0;
-    ·go_strtod((uintptr)nptr, (uintptr)endptr, (uintptr)&result);
+    ·go_strtod((uintptr)nptr, (uintptr)endptr, (uintptr)&hugeval, (uintptr)&mhugeval, (uintptr)&result);
     return result;
 }
 

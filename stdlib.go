@@ -148,7 +148,7 @@ const (
 	stod_afteresign
 )
 
-func go_strtod(str, endptr_, presult_ uintptr) {
+func go_strtod(str, endptr_, hugeval_, mhugeval_, presult_ uintptr) {
 	str0 := str
 	for *peek(str) == ' ' { //FIXME: isWhitespace(...)
 		str++
@@ -203,9 +203,18 @@ func go_strtod(str, endptr_, presult_ uintptr) {
 
 	result, err := strconv.ParseFloat(string(buf), 64)
 	if err != nil {
-		// TODO: for library testing, log the error somewhere
-		result = 0
-		str = str0
+		nerr, _ := err.(*strconv.NumError)
+		isrange := nerr != nil && nerr.Err == strconv.ErrRange
+		switch {
+		case isrange && math.IsInf(result, 1):
+			result = *(*float64)(unsafe.Pointer(hugeval_))
+		case isrange && math.IsInf(result, -1):
+			result = *(*float64)(unsafe.Pointer(mhugeval_))
+		default:
+			// TODO: for library testing, log the error somewhere
+			result = 0
+			str = str0
+		}
 	}
 	*(*float64)(unsafe.Pointer(presult_)) = result
 
