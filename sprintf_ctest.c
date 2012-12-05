@@ -16,4 +16,17 @@ TestSprintf(void) {
 
     if (sprintf(buf, "a%.14ga", 1.01l), strcmp(buf, "a1.01a")!=0)
         runtime·panicstring(buf);
+    if (sprintf(buf, "a%da", (int)123), strcmp(buf, "a123a")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%da%da", (int)123, (int)456), strcmp(buf, "a123a456a")!=0)
+        runtime·panicstring(buf);
+
+    if (sprintf(buf, "%ld", (long int)234), strcmp(buf, "234")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%ca1", "G"[0]), strcmp(buf, "aGa1")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%ca2", 'G'), strcmp(buf, "aGa2")!=0)
+        runtime·panicstring(buf);
+    if (sprintf(buf, "a%-3sa", "y"), strcmp(buf, "ay  a")!=0)
+        runtime·panicstring(buf);
 }

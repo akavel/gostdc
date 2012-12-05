@@ -5,7 +5,6 @@ import (
 	"math"
 	"math/rand"
 	"os"
-	"regexp"
 	"runtime"
 	"strconv"
 	"testing"
@@ -15,20 +14,6 @@ import (
 
 func peek(addr uintptr) *byte {
 	return (*byte)(unsafe.Pointer(addr))
-}
-
-func cstr2bytes(cstr uintptr) []byte {
-	buf := make([]byte, 0)
-	i := uintptr(0)
-	for {
-		addr := peek(cstr + i)
-		if *addr == 0 {
-			break
-		}
-		buf = append(buf, *addr)
-		i++
-	}
-	return buf
 }
 
 type alloc struct {
@@ -123,53 +108,15 @@ func go_time(t uintptr) {
 
 func golua_call(L, f, uv uintptr)
 
-var printf_matcher = regexp.MustCompile(`%.`)
-var printf_gmatcher = regexp.MustCompile(`%\.14g`) // HACK: standard Lua float format
-
-//FIXME
-func go_vprintf(format, args, bigword uintptr) []byte {
-	format1 := cstr2bytes(format)
-	//HACK:
-	format1 = printf_gmatcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
-		return []byte(fmt.Sprintf("%.14g", *(*float64)(unsafe.Pointer(args))))
-	})
-	format1 = printf_matcher.ReplaceAllFunc(format1, func(pat []byte) []byte {
-		switch pat[1] {
-		case 's':
-			arg := cstr2bytes(*(*uintptr)(unsafe.Pointer(args)))
-			args += bigword
-			return arg
-		case 'd':
-			arg := *((*int)(unsafe.Pointer(args)))
-			args += bigword
-			return []byte(fmt.Sprintf("%d", arg))
-		case '%':
-			return pat[1:]
-		default:
-			panic("not implemented printf format %" + string(pat[1]) + " in \"" + string(format1) + "\"")
-		}
-		return pat
-	})
-	return format1
-}
-
-//FIXME
-func go_fprintf(stream, format, args, bigword uintptr) {
-	format1 := go_vprintf(format, args, bigword)
-	print(string(format1))
-}
-
 func poke(addr uintptr, value byte) {
 	*(*byte)(unsafe.Pointer(addr)) = value
 }
 
-//FIXME
-func go_sprintf(str, format, args, bigword uintptr) {
-	format1 := go_vprintf(format, args, bigword)
-	for i := 0; i < len(format1); i++ {
-		poke(str+uintptr(i), format1[i])
+func pokestringplus0(dst uintptr, src []byte) {
+	for i := 0; i < len(src); i++ {
+		poke(dst+uintptr(i), src[i])
 	}
-	poke(str+uintptr(len(format1)), 0)
+	poke(dst+uintptr(len(src)), 0)
 }
 
 func golua_ctestrun(f uintptr)
@@ -201,7 +148,7 @@ const (
 	stod_afteresign
 )
 
-func go_strtod(str, endptr_, presult_ uintptr) {
+func go_strtod(str, endptr_, hugeval_, mhugeval_, presult_ uintptr) {
 	str0 := str
 	for *peek(str) == ' ' { //FIXME: isWhitespace(...)
 		str++
@@ -256,9 +203,18 @@ func go_strtod(str, endptr_, presult_ uintptr) {
 
 	result, err := strconv.ParseFloat(string(buf), 64)
 	if err != nil {
-		// TODO: for library testing, log the error somewhere
-		result = 0
-		str = str0
+		nerr, _ := err.(*strconv.NumError)
+		isrange := nerr != nil && nerr.Err == strconv.ErrRange
+		switch {
+		case isrange && math.IsInf(result, 1):
+			result = *(*float64)(unsafe.Pointer(hugeval_))
+		case isrange && math.IsInf(result, -1):
+			result = *(*float64)(unsafe.Pointer(mhugeval_))
+		default:
+			// TODO: for library testing, log the error somewhere
+			result = 0
+			str = str0
+		}
 	}
 	*(*float64)(unsafe.Pointer(presult_)) = result
 
@@ -284,8 +240,24 @@ func (s stdiostream) putc(c byte) {
 	stdiostreams[s].Write([]byte{c})
 }
 
+func (s stdiostream) gets(n int) []byte {
+	// FIXME: check and return any errors from Read
+	buf := make([]byte, n)
+	n, err := stdiostreams[s].Read(buf)
+	if err != nil {
+		panic(err.Error())
+	} // FIXME: make sure errors are handled somehow sensibly
+	return buf[:n]
+}
+
 func goputc(c_, stream_ uintptr) {
 	stream := stdiostream(stream_)
 	c := byte(c_)
 	stream.putc(c)
+}
+
+func gofgets(s_ uintptr, n int, stream_ uintptr) {
+	stream := stdiostream(stream_)
+	buf := stream.gets(n - 1)
+	pokestringplus0(s_, buf)
 }

@@ -3,6 +3,7 @@
 #define gostdc_time_h
 #define gostdc_locale_h
 #define gostdc_stdarg_h
+#define gostdc_math_h
 
 #include "gostdc.h"
 
@@ -78,18 +79,6 @@ atan2(double y, double x) {
     return y;
 }
 
-char*
-strchr(const char* s, int ch) {
-    char c = ch;
-    while (*s && (*s != c)) {
-        s++;
-    }
-    if (!*s) {
-        return 0;
-    }
-    return (char*) s;
-}
-
 size_t
 strlen(const char* s) {
     const char* p = s;
@@ -98,23 +87,16 @@ strlen(const char* s) {
     return (size_t) (p - s - 1);
 }
 
+
 //FIXME
 double
 strtod(const char* nptr, char** endptr) {
-    void ·go_strtod(uintptr, uintptr, uintptr presult);
+    double hugeval = HUGE_VAL;
+    double mhugeval = -HUGE_VAL;
+    void ·go_strtod(uintptr, uintptr, uintptr, uintptr, uintptr presult);
     double result=0;
-    ·go_strtod((uintptr)nptr, (uintptr)endptr, (uintptr)&result);
+    ·go_strtod((uintptr)nptr, (uintptr)endptr, (uintptr)&hugeval, (uintptr)&mhugeval, (uintptr)&result);
     return result;
-}
-
-//FIXME
-unsigned long
-strtoul(const char* str, char** endptr, int base) {
-    nyi('1');
-    if (endptr) {
-        *endptr = (char*) str+1;
-    }
-    return 0;
 }
 
 int
@@ -149,20 +131,6 @@ strncpy(char* dst, const char* src, size_t n) {
         dst++;
         n--;
     }
-    return dst0;
-}
-
-char*
-strcat(char* dst, const char* src) {
-    char* dst0 = dst;
-    while (*dst) {
-        dst++;
-    }
-    while (*src) {
-        *dst = *src;
-        dst++; src++;
-    }
-    *dst = *src;
     return dst0;
 }
 
@@ -240,9 +208,10 @@ memchr(const void* s, int c, size_t n) {
     unsigned char* p = s;
     unsigned char u = (unsigned char) c;
     while (n > 0) {
-        if (*p == c) {
+        if (*p == u) {
             return (void*) p;
         }
+        p++;
         n--;
     }
     return 0;
@@ -423,10 +392,10 @@ clock(void) {
 #pragma textflag 7
 int
 sprintf(char* str, const char* format, ...) {
-    void ·go_sprintf(uintptr, uintptr, uintptr, uintptr);
+    void ·go_sprintf(uintptr, uintptr, uintptr, uintptr, uintptr);
     va_list argp;
     va_start(argp, format);
-    ·go_sprintf((uintptr)str, (uintptr)format, (uintptr)argp, (uintptr)_BIGWORD);
+    ·go_sprintf((uintptr)str, (uintptr)format, argp.base, argp.off, (uintptr)sizeof(uintptr));
     va_end(argp);
     //nyi('6');
     return 0; //FIXME
@@ -436,10 +405,10 @@ sprintf(char* str, const char* format, ...) {
 #pragma textflag 7
 int
 fprintf(FILE* stream, const char* format, ...) {
-    void ·go_fprintf(uintptr, uintptr, uintptr, uintptr);
+    void ·go_fprintf(uintptr, uintptr, uintptr, uintptr, uintptr);
     va_list argp;
     va_start(argp, format);
-    ·go_fprintf((uintptr)stream, (uintptr)format, (uintptr)argp, (uintptr)_BIGWORD);
+    ·go_fprintf((uintptr)stream, (uintptr)format, argp.base, argp.off, (uintptr)sizeof(uintptr));
     va_end(argp);
     //nyi('7');
     return 0; //FIXME
@@ -564,4 +533,40 @@ fputs(const char* s, FILE* stream) {
         s++;
     }
     return 1; //FIXME
+}
+double
+frexp(double num, int* exp) {
+    void ·go_frexp(uintptr, uintptr);
+    ·go_frexp((uintptr)&num, (uintptr)exp); //FIXME: is int* safe here, with regards to its width?
+    return num;
+}
+
+//FIXME: error handling
+double
+ldexp(double x, int exp) {
+    void ·go_ldexp(uintptr, uintptr);
+    ·go_ldexp((uintptr)&x, (uintptr)exp); //FIXME: is int safe here, with regards to its width?
+    return x;
+}
+
+int
+rand(void) {
+    void ·go_rand(uintptr);
+    int32 ret = 0;
+    ·go_rand((uintptr)&ret);
+    return ret;
+}
+
+void
+srand(unsigned seed) {
+    void ·go_srand(uintptr);
+    ·go_srand((uintptr)seed);
+}
+
+//FIXME: handle errors
+char*
+fgets(char* s, int n, FILE* stream) {
+    void ·gofgets(uintptr, uintptr, uintptr);
+    ·gofgets((uintptr)s, n, (uintptr)stream);
+    return s;
 }
