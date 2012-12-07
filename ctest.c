@@ -1,24 +1,31 @@
 
 #include "ctest.h"
 
+typedef void (*ctestf)(void);
+void ·go_ctest(uintptr t, ctestf f);
+
 void
 ·golua_ctestrun(ctestf f) {
-    (*f)();
+	(*f)();
 }
+
+#define RUN_CTEST(t,func)\
+	void func(void);\
+	·go_ctest(t, func)
 
 void
 ·golua_ctests(uintptr t) {
-    // order is important in the first block
-    ·go_ctest(t, TestStrlen);
-    ·go_ctest(t, TestStrcmp);
-    ·go_ctest(t, TestVarargs);
-    ·go_ctest(t, TestSprintf);
+	// order is important in the first block
+	RUN_CTEST(t, TestStrlen);
+	RUN_CTEST(t, TestStrcmp);
+	RUN_CTEST(t, TestVarargs);
+	RUN_CTEST(t, TestSprintf);
 
-    ·go_ctest(t, TestMemchr);
-    ·go_ctest(t, TestStrpbrk);
-    ·go_ctest(t, TestStrtod);
-    ·go_ctest(t, TestStrtoul);
-    ·go_ctest(t, TestLdexp);
-    ·go_ctest(t, TestFrexp);
-    ·go_ctest(t, TestPtrdiff_t);
+	RUN_CTEST(t, TestMemchr);
+	RUN_CTEST(t, TestStrpbrk);
+	RUN_CTEST(t, TestStrtod);
+	RUN_CTEST(t, TestStrtoul);
+	RUN_CTEST(t, TestLdexp);
+	RUN_CTEST(t, TestFrexp);
+	RUN_CTEST(t, TestPtrdiff_t);
 }
