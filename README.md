@@ -30,7 +30,12 @@ TODO
   * [optionally] replace most C functions with some MIT/BSD
     implementations
   * split the .c and .go files functionally as .h files would suggest
+  * add info that you **must** make sure **every single** C file does
+    effectively `#include "gostdc.h"`, [because of][1]
+    ["extern register"][plan9cc]
 
+  [1]: https://code.google.com/p/go/source/diff?spec=svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&name=9ef1fd2b7e47&r=9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&format=side&path=/src/pkg/runtime/runtime.h#sc_svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42_94
+  [plan9cc]: http://doc.cat-v.org/plan_9/4th_edition/papers/compiler
 
 LICENSE
 -------
