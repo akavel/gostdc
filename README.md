@@ -20,6 +20,11 @@ QUICK USAGE
 TODO
 ----
 
+  * try to reuse [Plan 9 "APE" POSIX libraries + libc][APE] (thanks to Lars Seipel for info)
+    * http://plan9.bell-labs.com/sources/plan9/sys/include/ape/
+    * http://plan9.bell-labs.com/sources/plan9/${ARCH}/include/ape/
+    * https://github.com/wangeguo/plan9/blob/master/sys/src/ape/lib/bsd/strdup.c
+    * https://github.com/wangeguo/plan9/tree/master/sys/src/ape/lib/ap
   * slap license on the files + add AUTHORS file.
   * write full pretty readme
   * remove any left 'golua' in file contents
@@ -36,6 +41,7 @@ TODO
 
   [1]: https://code.google.com/p/go/source/diff?spec=svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&name=9ef1fd2b7e47&r=9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&format=side&path=/src/pkg/runtime/runtime.h#sc_svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42_94
   [plan9cc]: http://doc.cat-v.org/plan_9/4th_edition/papers/compiler
+  [APE]: http://plan9.bell-labs.com/sys/doc/ape.html
 
 LICENSE
 -------
