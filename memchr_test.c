@@ -1,6 +1,4 @@
-
-#define gostdc_string_h
-#include "ctest.h"
+#include "gostdc.h"
 
 void
 TestMemchr(void) {

@@ -1,7 +1,4 @@
-
-#define gostdc_stdio_h
-#define gostdc_math_h
-#include "ctest.h"
+#include "gostdc.h"
 
 void
 TestFrexp(void) {

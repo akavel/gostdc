@@ -1,0 +1,68 @@
+#ifndef __AKAVEL_GOSTDC_H
+#define __AKAVEL_GOSTDC_H
+
+/*
+ * We don't need to provide path to runtime.h, as it is distributed
+ * in $GOROOT/pkg/$GOOS_$GOARCH, and the 'go' tool passes this path
+ * to the internal C compiler via -I flag. Who would expect.
+ *
+ * From runtime.h, we currently need mostly a few VERY IMPORTANT items:
+ * - extern register M *m; extern register G *g;
+ *   See:
+ *    https://code.google.com/p/go/source/diff?spec=svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&name=9ef1fd2b7e47&r=9ef1fd2b7e476df9c04fec3c9833fe473cbacc42&format=side&path=/src/pkg/runtime/runtime.h#sc_svn9ef1fd2b7e476df9c04fec3c9833fe473cbacc42_94
+ *    http://doc.cat-v.org/plan_9/4th_edition/papers/compiler
+ *   In short words, *every* C file linked to Go *must* have identical
+ *   "extern register" declarations, so compiler knows to reserve that
+ *   many registers for those special variables.
+ * - uintptr, intptr (depends on $GOARCH)
+ * - ROUND() macro (varargs memory layout)
+ *
+ * Unfortunately, this will also pollute our global namespace with a lot
+ * of other symbols. If that becomes a problem, we might need to
+ * drop this #include, and import required items by hand, but until
+ * we have to, it's easier, safer and more portable to #include.
+ */
+#include <runtime.h>
+
+/* 
+ * remove some protections defined in the above header
+ */
+#undef unsigned
+#undef signed
+#undef char
+#undef short
+#undef int
+#undef long
+#undef float
+#undef double
+
+/*
+ * See:
+ * https://codereview.appspot.com/6260051
+ * http://code.google.com/p/go/source/detail?r=722bb90ae3ee
+ */
+#ifndef ROUND
+#define ROUND runtime·rnd
+#endif
+
+/*
+ * offsetof is defined both in "runtime.h" and "amalgm.h" - drop both
+ */
+#undef offsetof
+
+/*
+ * For fconv.h (and maybe others too?).
+ * GOARCH_... is defined by 'go build' command
+ */
+//#ifdef GOARCH_386
+//#define IEEE_8087
+//#endif
+//#ifdef GOARCH_amd64
+//#define IEEE_8087
+//#endif
+#ifndef _RESEARCH_SOURCE
+#define _RESEARCH_SOURCE
+#endif
+
+//#include "amalgm.h"
+

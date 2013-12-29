@@ -1,0 +1,24 @@
+
+//#include "amalgm.h"
+
+/*
+ * offsetof is defined both in "runtime.h" and "amalgm.h" - drop both
+ */
+#undef offsetof
+
+/*
+ * Some functions etc. bridging between C and Go.
+ */
+void runtime·panicstring(int8*);
+#define	O_RDONLY 0
+#define	O_WRONLY 1
+#define	O_RDWR	 2
+int creat(const char *path, mode_t mode);
+int open(const char *path, int oflag);
+int close(int filedes);
+off_t lseek(int filedes, off_t offset, int whence);
+ssize_t read(int filedes, void *buf, size_t nbyte);
+ssize_t write(int filedes, const void *buf, size_t nbyte);
+void _exit(int status);
+
+#endif __AKAVEL_GOSTDC_H

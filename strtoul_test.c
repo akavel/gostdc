@@ -1,8 +1,4 @@
-
-#define gostdc_stdlib_h
-#define gostdc_limits_h
-#define gostdc_errno_h
-#include "ctest.h"
+#include "gostdc.h"
 
 void
 TestStrtoul(void) {

@@ -1,7 +1,4 @@
-
-#define gostdc_string_h
-#define gostdc_stdarg_h
-#include "ctest.h"
+#include "gostdc.h"
 
 void runtime·prints(int8 *s);
 #define HEXD(x) ((x)<10 ? '0'+(x) : 'a'-10+(x))
